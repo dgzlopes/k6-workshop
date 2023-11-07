@@ -20,6 +20,8 @@ Useful links: [Slides](https://docs.google.com/presentation/d/1GvELBpWO7ess0otbr
     + [1.7.3. Custom metrics](#173-custom-metrics)
     + [1.7.4. Custom summary](#174-custom-summary)
 - [2. Integration with Grafana Cloud k6](#2-integration-with-grafana-cloud-k6)
+  * [2.1. Run locally and stream results to the cloud](#21-run-locally-and-stream-results-to-the-cloud)
+  * [2.2. Run in the cloud](#22-run-in-the-cloud)
 - [3. More things](#3-more-things)
   * [3.1. Scenarios](#31-scenarios)
   * [3.2. Modules](#32-modules)
@@ -283,7 +285,7 @@ You can also inspect the status code of the test with:
 echo $?
 
 # If you don't have k6 installed
-docker run -i --network=k6-workshop_default grafana/k6 run -e BASE_URL=http://quickpizza:3333  - <example.js; echo $?
+docker run -i --network=k6-workshop_default grafana/k6 run -e BASE_URL=http://quickpizza:3333 - <example.js; echo $?
 ```
 
 Then, rerun the script.
@@ -342,7 +344,7 @@ let res = http.post(`${BASE_URL}/api/pizza`, JSON.stringify(restrictions), {
 });
 ```
 
-> NOTE: If you are using docker, you need to mount the `customers.json` file. You can do that by adding the following flag to the docker command: `-v $(pwd)/customers.json:/customers.json`.
+> IMPORTANT: If you are using docker, you need to mount the `customers.json` file. You can do that by adding the following flag to the docker command: `-v $(pwd)/customers.json:/customers.json`.
 
 That way, we will pick a random customer from the list of customers. Then, rerun the script.
 
@@ -493,7 +495,61 @@ You can learn more about this [in our docs](https://k6.io/docs/results-output/en
 
 ## 2. Integration with Grafana Cloud k6
 
--- TODO
+### 2.1. Run locally and stream results to the cloud
+
+Once you are inside Grafana Cloud k6, go to the `default project` and click on `Create new test` (on the top right of the screen).
+
+Copy-paste and run the step 2 command to authenticate your local k6 CLI with Grafana Cloud k6. You only need to do this once!
+
+```bash
+# If you have k6 installed
+k6 login cloud --token <your-token>
+
+# If you don't have k6, nothing for now. We will pass this token to the container in the future.
+```
+
+> NOTE: If you are using Docker, you will need to pass the token as an environment 
+
+Then, from step 3, copy the `ext` block from the options and paste it into your script.
+
+```javascript
+// It will be something like this
+  ext: {
+    loadimpact: {
+      projectID: 3662002,
+      name: 'Test (07/11/2023-18:20:18)'
+    }
+  }
+```
+
+Feel free to change the test name to something more meaningful.
+
+Then, run the test with:
+```bash
+# If you have k6 installed
+k6 run --out=cloud example.js
+
+# If you don't have k6 installed, you need to pass the token to the container
+docker run -i -e K6_CLOUD_TOKEN=put-your-token-here --network=k6-workshop_default grafana/k6 run --out=cloud -e BASE_URL=http://quickpizza:3333 - <example.js
+```
+
+That's it! After some time, k6 will show you a link to the test results in Grafana Cloud k6.
+
+### 2.2. Run in the cloud
+
+To run the test in our cloud, you just need to use the `k6 cloud` command instead of `k6 run`.
+
+Also, we need to pass a new `BASE_URL`, as Grafana Cloud k6 won't be able to access the QuickPizza container you have locally.
+
+There is a copy of QuickPizza running on https://blue-paper-2772.fly.dev. Let's use that!
+
+```bash
+# If you have k6 installed
+k6 cloud -e BASE_URL=https://blue-paper-2772.fly.dev example.js
+
+# If you don't have k6 installed
+docker run -i -e K6_CLOUD_TOKEN=put-your-token-here --network=k6-workshop_default grafana/k6 cloud -e BASE_URL=https://blue-paper-2772.fly.dev - <example.js
+```
 
 ## 3. More things
 
