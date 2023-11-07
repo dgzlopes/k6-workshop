@@ -42,7 +42,6 @@ Useful links: [Slides](https://docs.google.com/presentation/d/1GvELBpWO7ess0otbr
 
 - Docker & Docker Compose
 - git
-- GitHub account
 - Optional (but recommended): [k6](https://k6.io/docs/get-started/installation/)
   - You can run it inside Docker, but the experience is better if you install it locally.
     - You get nice colors and dynamic progress bars!
@@ -50,6 +49,8 @@ Useful links: [Slides](https://docs.google.com/presentation/d/1GvELBpWO7ess0otbr
   - If you plan to use Docker, please, pre-pull the images with:
     - `docker pull grafana/k6`
     - `docker pull grafana/k6:master-with-browser`
+- Grafana Cloud account.
+  - You can create one for free at https://grafana.com/products/cloud/k6/
 
 ###  0.3. Run the local playground
 
@@ -68,8 +69,6 @@ cd k6-workshop; docker-compose up -d
 To verify everything is working, go to http://localhost:3333 and click the big button.
 
 If you see a pizza recommendation, that's good!
-
-Also, open http://localhost:3000 and verify that you can see a Grafana instance.
 
 ## 1. Grafana k6 foundations
 
