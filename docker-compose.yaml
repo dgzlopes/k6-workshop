@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  quickpizza:
+    image: ghcr.io/grafana/quickpizza-local:0.2.0
+    ports:
+      - 3333:3333
