@@ -70,6 +70,14 @@ To verify everything is working, go to http://localhost:3333 and click the big b
 
 If you see a pizza recommendation, that's good!
 
+> Note: If you don't want to use Docker Compose, you can:
+```bash
+docker network create k6-workshop_default
+docker run --rm -it --name quickpizza --network=k6-workshop_default -p 3333:3333 ghcr.io/grafana/quickpizza-local:latest
+# Delete de network when you are done with the workshop
+docker network rm k6-workshop_default
+```
+
 ## 1. Grafana k6 foundations
 
 ### 1.1. Run your first test
@@ -540,14 +548,14 @@ To run the test in our cloud, you just need to use the `k6 cloud` command instea
 
 Also, we need to pass a new `BASE_URL`, as Grafana Cloud k6 won't be able to access the QuickPizza container you have locally.
 
-There is a copy of QuickPizza running on https://blue-paper-2772.fly.dev. Let's use that!
+There is a copy of QuickPizza running on https://pizza.grafana.fun. Let's use that!
 
 ```bash
 # If you have k6 installed
-k6 cloud -e BASE_URL=https://blue-paper-2772.fly.dev example.js
+k6 cloud -e BASE_URL=https://pizza.grafana.fun example.js
 
 # If you don't have k6 installed
-docker run -i -e K6_CLOUD_TOKEN=put-your-token-here --network=k6-workshop_default grafana/k6 cloud -e BASE_URL=https://blue-paper-2772.fly.dev - <example.js
+docker run -i -e K6_CLOUD_TOKEN=put-your-token-here --network=k6-workshop_default grafana/k6 cloud -e BASE_URL=https://pizza.grafana.fun - <example.js
 ```
 
 ## 3. More things
